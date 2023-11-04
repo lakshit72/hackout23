@@ -1,0 +1,12 @@
+{
+    SHA256_ID (hashKey): {
+        coordinates: {
+            x1: INT,
+            y1: INT,
+            x2: INT,
+            y2: INT
+        },
+        rating: INT(range[-10, 10]),
+        ratingCount: INT
+    }
+}
