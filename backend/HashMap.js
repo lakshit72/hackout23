@@ -7,8 +7,8 @@ class HashMap {
     constructor() {
 
     this.stepSize = {
-        x: 100,
-        y: 100
+        x: 0.005,
+        y: 0.005
     }
     
     this.defaultObject = {

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 void main() {
   runApp(const MyApp());
@@ -14,7 +16,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Flutter',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         // This is the theme of your application.
         //
@@ -34,13 +37,14 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const MyHomePage(title: ''),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
+
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -57,7 +61,32 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
+class Album{
+  final double x1;
+  final double x2;
+  final double y1;
+  final double y2;
+
+  const Album({
+    required this.x1,
+    required this.x2,
+    required this.y1,
+    required this.y2
+  });
+
+}
+
+
 class _MyHomePageState extends State<MyHomePage> {
+  double lt = 12.972442;
+  double br = 77.580643;
+
+  Future<http.Response> createAlbum(String title) {
+  return  http.get(Uri.parse("http://localhost:3000/getCoord"),headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+    },) ;
+}
+
   
   @override
   Widget build(BuildContext context) {
@@ -76,8 +105,14 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: FlutterMap(
         mapController: controller,
-    options: const MapOptions(
-      initialCenter: LatLng(12.972442, 77.580643),
+    options: MapOptions(
+      onTap:(tapPosition, point) => {
+
+        setState(() => {
+
+        },)
+      },
+      initialCenter: const LatLng(12.972442, 77.580643),
       initialZoom: 15,
     ),
     children: [
@@ -85,14 +120,14 @@ class _MyHomePageState extends State<MyHomePage> {
         urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
         userAgentPackageName: 'com.example.app',
       ),
-      RichAttributionWidget(
-        attributions: [
-          TextSourceAttribution(
-            'OpenStreetMap contributors',
-            onTap: () => launchUrl(Uri.parse('https://openstreetmap.org/copyright')),
-          ),
-        ],
-      ),
+      PolygonLayer(polygons: [
+        Polygon(points:[
+          LatLng(lt, br),
+          LatLng(lt+0.005, br),
+          LatLng(lt+0.005, br+0.005),
+          LatLng(lt, br+0.005),
+        ],color: Color.fromARGB(100, 255, 0, 0),isFilled: true)
+      ])
     ],
   ));
   }
