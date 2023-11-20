@@ -3,6 +3,34 @@ const sha256 = require("hash.js/lib/hash/sha/256")
 const database = require("./database.json")
 // For all the functions, just pass the coordinates (STRING) as the key
 
+// Something to do with the SHA256 function encoding differently with and without braces
+
+// let temp = {}
+// for (let i = 12; i < 14; i += 0.005) {
+//     for (let j = 76; j < 78; j += 0.005) {
+//         let coords = {"x1": j.toFixed(3), "y1": i.toFixed(3), "x2": (j + 0.005).toFixed(3), "y2": (i + 0.005).toFixed(3)}
+//         let hashKey = sha256().update(JSON.stringify(coords)).digest("hex")
+//         temp[hashKey] = {
+//             coordinates: {
+//                 x1: 0,
+//                 y1: 0,
+//                 x2: 0,
+//                 y2: 0
+//             },
+//             safetyIndex: Math.random() * 10,
+//             consensusPopulationCount: Math.ceil(Math.random() * 1000)
+//         }
+//         temp[hashKey].coordinates = {
+//             x1: coords.x1,
+//             y1: coords.y1,
+//             x2: coords.x2,
+//             y2: coords.y2
+//         } 
+//     }
+// }
+// fs.writeFileSync("./database.json", JSON.stringify(temp), (err) => {
+//     if (err) throw err
+// })
 class HashMap {
     constructor() {
 
@@ -57,13 +85,14 @@ class HashMap {
     // Pass the coordinates of the touch location on the screen as an object { x: xVal, y: yVal } and it will return the 
     find(coords) {
         let parentCoords = {
-            x1: (coords.x - (coords.x % this.stepSize.x)),
-            y1: (coords.y - (coords.y % this.stepSize.y)),
-            x2: (coords.x - (coords.x % this.stepSize.x)) + this.stepSize.x,
-            y2: (coords.y - (coords.y % this.stepSize.y)) + this.stepSize.y
+            "x1": (coords.x - (coords.x % this.stepSize.x)).toFixed(3),
+            "y1": (coords.y - (coords.y % this.stepSize.y)).toFixed(3),
+            "x2": ((coords.x - (coords.x % this.stepSize.x)) + this.stepSize.x).toFixed(3),
+            "y2": ((coords.y - (coords.y % this.stepSize.y)) + this.stepSize.y).toFixed(3)
         }
+        console.log(parentCoords)
         let hashKey = sha256().update(JSON.stringify(parentCoords)).digest("hex")
-        return this.hashMap[hashKey]
+        return (this.hashMap[hashKey] == null) ? {"error": "Not found"} : this.hashMap[hashKey]
     }
 }
 
